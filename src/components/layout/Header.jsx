@@ -1,9 +1,12 @@
+import { useState } from 'react'
 import { Menu, Search, Bell, Moon, Sun } from 'lucide-react'
-import { useTheme } from '@context/ThemeContext'
-import { cn } from '@utils/helpers'
 
-function Header({ onToggleSidebar, onToggleMobileMenu, sidebarOpen }) {
-  const { theme, toggleTheme } = useTheme()
+function Header({ onToggleSidebar, onToggleMobileMenu, sidebarOpen: _sidebarOpen }) {
+  const [theme, setTheme] = useState('light')
+
+  const toggleTheme = () => {
+    setTheme(theme === 'light' ? 'dark' : 'light')
+  }
 
   return (
     <header className="sticky top-0 z-30 bg-white border-b border-gray-200">

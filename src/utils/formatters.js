@@ -1,4 +1,4 @@
-import { format, formatDistance, formatRelative, isToday, isYesterday, differenceInMinutes, differenceInHours, differenceInDays } from 'date-fns'
+import { format, formatDistance, isToday, isYesterday, differenceInMinutes, differenceInHours, differenceInDays } from 'date-fns'
 import { DATE_FORMATS } from './constants'
 
 /**
@@ -228,7 +228,7 @@ export function formatTaskStatus(status) {
   
   return status
     .split('_')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(' ')
 }
 
@@ -265,7 +265,7 @@ export function formatName(name) {
   
   return name
     .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(' ')
 }
 
@@ -280,7 +280,7 @@ export function toTitleCase(text) {
   return text
     .toLowerCase()
     .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ')
 }
 
@@ -305,7 +305,7 @@ export function formatSlug(slug) {
   
   return slug
     .split('-')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ')
 }
 

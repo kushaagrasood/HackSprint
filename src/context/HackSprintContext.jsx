@@ -2,8 +2,20 @@ import { createContext, useContext, useState, useEffect, useCallback } from 'rea
 import { db } from '@services/supabase'
 import { handleSupabaseError } from '@services/supabase'
 import { useAuth } from '@context/AuthContext'
+import toast from 'react-hot-toast'
 
 const HackSprintContext = createContext({})
+
+function normalizeTaskPayload(taskData = {}) {
+  const payload = { ...taskData }
+
+  if ('deadline' in payload && !('due_date' in payload)) {
+    payload.due_date = payload.deadline
+  }
+
+  delete payload.deadline
+  return payload
+}
 
 /**
  * HackSprintProvider component
@@ -33,9 +45,6 @@ export function HackSprintProvider({ children }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   
-  // Real-time subscriptions
-  const [subscriptions, setSubscriptions] = useState([])
-
   /**
    * Load project data from database
    * @param {string} projectId - Project ID
@@ -96,12 +105,48 @@ export function HackSprintProvider({ children }) {
     }
   }, [user])
 
+  const loadInitialProject = useCallback(async () => {
+    if (!user) {
+      clearProject()
+      return
+    }
+
+    try {
+      setLoading(true)
+      setError(null)
+
+      const { data: projects, error: projectsError } = await db
+        .from('projects')
+        .select('id')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: true })
+        .limit(1)
+
+      if (projectsError) throw projectsError
+
+      if (projects?.length) {
+        await loadProject(projects[0].id)
+      } else {
+        clearProject()
+      }
+    } catch (err) {
+      const errorMessage = handleSupabaseError(err)
+      setError(errorMessage)
+    } finally {
+      setLoading(false)
+    }
+  }, [loadProject, user])
+
   /**
    * Create a new project
    * @param {Object} projectData - Project data
    */
   const createProject = async (projectData) => {
-    if (!user) return { data: null, error: 'User not authenticated' }
+    if (!user) {
+      const error = 'User not authenticated'
+      toast.error(error)
+      return { data: null, error }
+    }
 
     try {
       setLoading(true)
@@ -131,10 +176,12 @@ export function HackSprintProvider({ children }) {
         progress: data.progress || 0,
       })
 
+      toast.success('Project created successfully!')
       return { data, error: null }
     } catch (err) {
       const errorMessage = handleSupabaseError(err)
       setError(errorMessage)
+      toast.error(errorMessage)
       return { data: null, error: errorMessage }
     } finally {
       setLoading(false)
@@ -189,7 +236,16 @@ export function HackSprintProvider({ children }) {
    * @param {Object} taskData - Task data
    */
   const addTask = async (taskData) => {
-    if (!activeProject) return { data: null, error: 'No active project' }
+    if (!activeProject) {
+      const error = 'No active project'
+      toast.error(error)
+      return { data: null, error }
+    }
+    if (!user) {
+      const error = 'User not authenticated'
+      toast.error(error)
+      return { data: null, error }
+    }
 
     try {
       setError(null)
@@ -198,8 +254,9 @@ export function HackSprintProvider({ children }) {
         .from('tasks')
         .insert([
           {
-            ...taskData,
+            ...normalizeTaskPayload(taskData),
             project_id: activeProject.id,
+            user_id: user.id,
             created_at: new Date().toISOString(),
           },
         ])
@@ -209,10 +266,12 @@ export function HackSprintProvider({ children }) {
       if (insertError) throw insertError
 
       setTasks((prev) => [...prev, data])
+      toast.success('Task created successfully')
       return { data, error: null }
     } catch (err) {
       const errorMessage = handleSupabaseError(err)
       setError(errorMessage)
+      toast.error(errorMessage)
       return { data: null, error: errorMessage }
     }
   }
@@ -229,7 +288,7 @@ export function HackSprintProvider({ children }) {
       const { data, error: updateError } = await db
         .from('tasks')
         .update({
-          ...updates,
+          ...normalizeTaskPayload(updates),
           updated_at: new Date().toISOString(),
         })
         .eq('id', taskId)
@@ -241,10 +300,12 @@ export function HackSprintProvider({ children }) {
       setTasks((prev) =>
         prev.map((task) => (task.id === taskId ? data : task))
       )
+      toast.success('Task updated successfully')
       return { data, error: null }
     } catch (err) {
       const errorMessage = handleSupabaseError(err)
       setError(errorMessage)
+      toast.error(errorMessage)
       return { data: null, error: errorMessage }
     }
   }
@@ -265,10 +326,12 @@ export function HackSprintProvider({ children }) {
       if (deleteError) throw deleteError
 
       setTasks((prev) => prev.filter((task) => task.id !== taskId))
+      toast.success('Task deleted successfully')
       return { error: null }
     } catch (err) {
       const errorMessage = handleSupabaseError(err)
       setError(errorMessage)
+      toast.error(errorMessage)
       return { error: errorMessage }
     }
   }
@@ -278,7 +341,16 @@ export function HackSprintProvider({ children }) {
    * @param {Object} itemData - Checklist item data
    */
   const addChecklistItem = async (itemData) => {
-    if (!activeProject) return { data: null, error: 'No active project' }
+    if (!activeProject) {
+      const error = 'No active project'
+      toast.error(error)
+      return { data: null, error }
+    }
+    if (!user) {
+      const error = 'User not authenticated'
+      toast.error(error)
+      return { data: null, error }
+    }
 
     try {
       setError(null)
@@ -289,6 +361,7 @@ export function HackSprintProvider({ children }) {
           {
             ...itemData,
             project_id: activeProject.id,
+            user_id: user.id,
             order: checklist.length,
             created_at: new Date().toISOString(),
           },
@@ -299,10 +372,12 @@ export function HackSprintProvider({ children }) {
       if (insertError) throw insertError
 
       setChecklist((prev) => [...prev, data])
+      // Don't show toast here - let the calling component handle it for better UX
       return { data, error: null }
     } catch (err) {
       const errorMessage = handleSupabaseError(err)
       setError(errorMessage)
+      toast.error(errorMessage)
       return { data: null, error: errorMessage }
     }
   }
@@ -331,10 +406,12 @@ export function HackSprintProvider({ children }) {
       setChecklist((prev) =>
         prev.map((item) => (item.id === itemId ? data : item))
       )
+      // Don't show toast here - let the calling component handle it for better UX
       return { data, error: null }
     } catch (err) {
       const errorMessage = handleSupabaseError(err)
       setError(errorMessage)
+      toast.error(errorMessage)
       return { data: null, error: errorMessage }
     }
   }
@@ -355,10 +432,12 @@ export function HackSprintProvider({ children }) {
       if (deleteError) throw deleteError
 
       setChecklist((prev) => prev.filter((item) => item.id !== itemId))
+      toast.success('Checklist item deleted')
       return { error: null }
     } catch (err) {
       const errorMessage = handleSupabaseError(err)
       setError(errorMessage)
+      toast.error(errorMessage)
       return { error: errorMessage }
     }
   }
@@ -414,6 +493,10 @@ export function HackSprintProvider({ children }) {
 
   // Set up real-time subscriptions when active project changes
   useEffect(() => {
+    loadInitialProject()
+  }, [loadInitialProject])
+
+  useEffect(() => {
     if (!activeProject) return
 
     // Subscribe to tasks changes
@@ -454,11 +537,10 @@ export function HackSprintProvider({ children }) {
       { filter: `project_id=eq.${activeProject.id}` }
     )
 
-    setSubscriptions([tasksSubscription, checklistSubscription])
-
     // Cleanup subscriptions
     return () => {
-      subscriptions.forEach((sub) => db.unsubscribe(sub))
+      db.unsubscribe(tasksSubscription)
+      db.unsubscribe(checklistSubscription)
     }
   }, [activeProject])
 

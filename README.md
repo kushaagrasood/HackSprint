@@ -1,8 +1,8 @@
-# 🚀 HackSprint
+# HackSprint
 
 A comprehensive solo hackathon execution platform built with React, Tailwind CSS, and Supabase. HackSprint helps you manage tasks, track progress, prepare pitches, analyze performance, and export your hackathon journey.
 
-## ✨ Features
+## Features
 
 ### Core Features
 - **📊 Dashboard**: Real-time progress tracking with analytics widgets
@@ -11,14 +11,14 @@ A comprehensive solo hackathon execution platform built with React, Tailwind CSS
 - **🎤 Pitch Preparation**: Rich text editor, templates, practice timer, and notes
 
 ### Advanced Features
-- **📈 Analytics**: Time tracking, productivity charts, and insights
-- **📚 Templates**: Reusable hackathon templates library
-- **💾 Export**: Export data and reports in PDF, CSV, and JSON formats
-- **🔄 Real-time Sync**: Supabase real-time subscriptions
-- **🎨 Theming**: Light/dark mode support
-- **📱 Responsive**: Mobile-first design
+- **Analytics**: Time tracking, productivity charts, and insights
+- **Templates**: Reusable hackathon templates library
+- **Export**: Export data and reports in PDF, CSV, and JSON formats
+- **Real-time Sync**: Supabase real-time subscriptions
+- **Theming**: Light/dark mode support
+- **Responsive**: Mobile-first design
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Frontend**: React 18 + Vite
 - **Styling**: Tailwind CSS
@@ -28,9 +28,9 @@ A comprehensive solo hackathon execution platform built with React, Tailwind CSS
 - **Charts**: Recharts
 - **Icons**: Lucide React
 - **Rich Text**: TipTap
-- **Export**: jsPDF, xlsx
+- **Export**: jsPDF, ExcelJS CDN, CSV/JSON/Markdown
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 HackSprint/
@@ -59,7 +59,7 @@ HackSprint/
 └── Configuration files
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -106,7 +106,7 @@ HackSprint/
    
    Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## 🗄️ Database Setup
+## Database Setup
 
 ### Supabase Configuration
 
@@ -127,7 +127,7 @@ The application uses the following main tables:
 - `templates` - Reusable templates
 - `analytics` - Analytics data
 
-## 🎨 Customization
+## Customization
 
 ### Theme Configuration
 
@@ -153,7 +153,7 @@ import { useTasks } from '@hooks/useTasks'
 import { supabase } from '@services/supabase'
 ```
 
-## 📦 Build for Production
+## Build for Production
 
 ```bash
 npm run build
@@ -167,7 +167,7 @@ The build output will be in the `dist/` directory.
 npm run preview
 ```
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Run tests
@@ -177,14 +177,14 @@ npm test
 npm run test:coverage
 ```
 
-## 📝 Available Scripts
+## Available Scripts
 
 - `npm run dev` - Start development server
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build
 - `npm run lint` - Run ESLint
 
-## 🔐 Security
+## Security
 
 - Environment variables for sensitive data
 - Row Level Security (RLS) in Supabase
@@ -192,7 +192,7 @@ npm run test:coverage
 - XSS protection
 - CSRF protection
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please follow these steps:
 
@@ -202,18 +202,18 @@ Contributions are welcome! Please follow these steps:
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - React team for the amazing framework
 - Supabase for the backend infrastructure
 - Tailwind CSS for the utility-first CSS framework
 - All open-source contributors
 
-## 📧 Contact
+## Contact
 
 For questions or support, please open an issue on GitHub.
 

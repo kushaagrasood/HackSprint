@@ -11,7 +11,6 @@ import {
   Award,
   Activity
 } from 'lucide-react'
-import { formatDistanceToNow } from 'date-fns'
 
 /**
  * Dashboard Page Component
@@ -19,7 +18,7 @@ import { formatDistanceToNow } from 'date-fns'
  */
 function Dashboard() {
   const { user } = useAuth()
-  const { activeProject, projectOverview, tasks, checklist } = useHackSprint()
+  const { activeProject, projectOverview, tasks, checklist, createProject } = useHackSprint()
   
   // Countdown state (default 24 hours from now)
   const [countdownEnd, setCountdownEnd] = useState(() => {
@@ -35,6 +34,14 @@ function Dashboard() {
     seconds: 0,
     total: 0
   })
+  const [projectForm, setProjectForm] = useState({
+    title: '',
+    description: '',
+    startDate: new Date().toISOString().split('T')[0],
+    endDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+  })
+  const [projectError, setProjectError] = useState('')
+  const [creatingProject, setCreatingProject] = useState(false)
 
   // Update countdown every second
   useEffect(() => {
@@ -145,6 +152,33 @@ function Dashboard() {
     )
   }
 
+  const handleCreateProject = async (event) => {
+    event.preventDefault()
+    setProjectError('')
+
+    if (!projectForm.title.trim()) {
+      setProjectError('Project title is required.')
+      return
+    }
+
+    setCreatingProject(true)
+
+    const { error } = await createProject({
+      title: projectForm.title.trim(),
+      description: projectForm.description.trim(),
+      status: 'planning',
+      start_date: projectForm.startDate ? new Date(projectForm.startDate).toISOString() : null,
+      end_date: projectForm.endDate ? new Date(projectForm.endDate).toISOString() : null,
+      progress: 0,
+    })
+
+    if (error) {
+      setProjectError(error)
+    }
+
+    setCreatingProject(false)
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -177,6 +211,83 @@ function Dashboard() {
             </div>
           </div>
         </div>
+
+        {!activeProject && (
+          <div className="card border border-primary-200 bg-white">
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Create your first project</h2>
+              <p className="mt-2 text-sm text-gray-600">
+                You are signed in as {user?.email || 'an authenticated user'}, but no active project exists yet.
+              </p>
+            </div>
+
+            <form onSubmit={handleCreateProject} className="grid gap-4 md:grid-cols-2">
+              <div className="md:col-span-2">
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="projectTitle">
+                  Project title
+                </label>
+                <input
+                  id="projectTitle"
+                  value={projectForm.title}
+                  onChange={(event) => setProjectForm((prev) => ({ ...prev, title: event.target.value }))}
+                  className="input"
+                  placeholder="AI Hackathon Sprint"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="projectDescription">
+                  Description
+                </label>
+                <textarea
+                  id="projectDescription"
+                  value={projectForm.description}
+                  onChange={(event) => setProjectForm((prev) => ({ ...prev, description: event.target.value }))}
+                  className="input min-h-28"
+                  placeholder="What are you building?"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="startDate">
+                  Start date
+                </label>
+                <input
+                  id="startDate"
+                  type="date"
+                  value={projectForm.startDate}
+                  onChange={(event) => setProjectForm((prev) => ({ ...prev, startDate: event.target.value }))}
+                  className="input"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="endDate">
+                  End date
+                </label>
+                <input
+                  id="endDate"
+                  type="date"
+                  value={projectForm.endDate}
+                  onChange={(event) => setProjectForm((prev) => ({ ...prev, endDate: event.target.value }))}
+                  className="input"
+                />
+              </div>
+
+              {projectError && (
+                <div className="md:col-span-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                  {projectError}
+                </div>
+              )}
+
+              <div className="md:col-span-2">
+                <button type="submit" disabled={creatingProject} className="btn btn-primary">
+                  {creatingProject ? 'Creating project...' : 'Create project'}
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
 
         {/* Countdown Timer Widget */}
         <div className="card bg-gradient-to-br from-primary-50 to-primary-100 border-2 border-primary-200">
@@ -223,7 +334,7 @@ function Dashboard() {
             <div className="mt-4 text-center">
               <p className="text-sm text-gray-700">
                 <Zap className="w-4 h-4 inline mr-1" />
-                Keep pushing! You've got this! 💪
+                Keep pushing! You&apos;ve got this! 💪
               </p>
             </div>
           )}
@@ -356,7 +467,7 @@ function Dashboard() {
                     <>
                       <Zap className="w-5 h-5 text-primary-600" />
                       <span className="text-sm font-medium text-primary-700">
-                        Let's get started! You've got this! ⚡
+                        Let&apos;s get started! You&apos;ve got this! ⚡
                       </span>
                     </>
                   )}

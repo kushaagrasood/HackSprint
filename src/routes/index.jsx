@@ -3,18 +3,21 @@ import { lazy, Suspense } from 'react'
 import Layout from '@components/layout/Layout'
 import ProtectedRoute from '@components/auth/ProtectedRoute'
 import { ROUTES } from '@utils/constants'
+import AuthPage from '@/pages/Auth'
 
-// Lazy load components for code splitting
-const Dashboard = lazy(() => import('@components/dashboard/Dashboard'))
-const TaskList = lazy(() => import('@components/tasks/TaskList'))
-const Checklist = lazy(() => import('@components/checklist/Checklist'))
-const PitchPrep = lazy(() => import('@components/pitch-prep/PitchPrep'))
-const Analytics = lazy(() => import('@components/analytics/Analytics'))
-const TemplateLibrary = lazy(() => import('@components/templates/TemplateLibrary'))
-const ExportModal = lazy(() => import('@components/export/ExportModal'))
-const Login = lazy(() => import('@components/auth/Login'))
-const Signup = lazy(() => import('@components/auth/Signup'))
-const ForgotPassword = lazy(() => import('@components/auth/ForgotPassword'))
+// Lazy load page components for code splitting
+const Dashboard = lazy(() => import('@/pages/Dashboard'))
+const TaskBoard = lazy(() => import('@/pages/TaskBoard'))
+const Checklist = lazy(() => import('@/pages/Checklist'))
+const PitchPrep = lazy(() => import('@/pages/PitchPrep'))
+const ExportPage = lazy(() => import('@/pages/Export'))
+// Placeholder components for routes not yet implemented
+const ComingSoon = () => (
+  <div className="flex flex-col items-center justify-center min-h-screen">
+    <h1 className="text-4xl font-bold text-gray-900 mb-4">Coming Soon</h1>
+    <p className="text-xl text-gray-600">This feature is under development</p>
+  </div>
+)
 
 // Loading component
 const LoadingFallback = () => (
@@ -28,9 +31,9 @@ function AppRoutes() {
     <Suspense fallback={<LoadingFallback />}>
       <Routes>
         {/* Public routes */}
-        <Route path={ROUTES.LOGIN} element={<Login />} />
-        <Route path={ROUTES.SIGNUP} element={<Signup />} />
-        <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPassword />} />
+        <Route path={ROUTES.LOGIN} element={<AuthPage mode="login" />} />
+        <Route path={ROUTES.SIGNUP} element={<AuthPage mode="signup" />} />
+        <Route path={ROUTES.FORGOT_PASSWORD} element={<AuthPage mode="forgot-password" />} />
 
         {/* Protected routes with layout */}
         <Route
@@ -46,12 +49,12 @@ function AppRoutes() {
           
           {/* Main application routes */}
           <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
-          <Route path={ROUTES.TASKS} element={<TaskList />} />
+          <Route path={ROUTES.TASKS} element={<TaskBoard />} />
           <Route path={ROUTES.CHECKLIST} element={<Checklist />} />
           <Route path={ROUTES.PITCH} element={<PitchPrep />} />
-          <Route path={ROUTES.ANALYTICS} element={<Analytics />} />
-          <Route path={ROUTES.TEMPLATES} element={<TemplateLibrary />} />
-          <Route path={ROUTES.EXPORT} element={<ExportModal />} />
+          <Route path={ROUTES.ANALYTICS} element={<ComingSoon />} />
+          <Route path={ROUTES.TEMPLATES} element={<ComingSoon />} />
+          <Route path={ROUTES.EXPORT} element={<ExportPage />} />
         </Route>
 
         {/* 404 - Not Found */}
