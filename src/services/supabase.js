@@ -2,16 +2,16 @@ import { createClient } from '@supabase/supabase-js'
 
 // Supabase configuration
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+const supabasePUBLISHABLEKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
 
 // Validate environment variables
-if (!supabaseUrl || !supabaseAnonKey) {
+if (!supabaseUrl || !supabasePUBLISHABLEKey) {
   console.error('Missing Supabase environment variables')
-  console.error('Please check your .env file and ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set')
+  console.error('Please check your .env file and ensure VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY are set')
 }
 
 // Create Supabase client with configuration
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+export const supabase = createClient(supabaseUrl, supabasePUBLISHABLEKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
@@ -323,7 +323,7 @@ export function handleSupabaseError(error) {
  * @returns {boolean} True if configured
  */
 export function isSupabaseConfigured() {
-  return !!(supabaseUrl && supabaseAnonKey)
+  return !!(supabaseUrl && supabasePUBLISHABLEKey)
 }
 
 // Export default client for direct access if needed

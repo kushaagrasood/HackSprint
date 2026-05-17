@@ -6,6 +6,7 @@ function Header({ onToggleSidebar, onToggleMobileMenu, sidebarOpen: _sidebarOpen
 
   const toggleTheme = () => {
     setTheme(theme === 'light' ? 'dark' : 'light')
+    console.log('theme: ', theme); //debugging dark mode not working
   }
 
   return (

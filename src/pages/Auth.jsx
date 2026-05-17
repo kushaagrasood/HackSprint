@@ -64,7 +64,7 @@ function AuthPage({ mode = 'login' }) {
           <p className="text-sm font-semibold uppercase tracking-[0.25em] text-sky-300">HackSprint</p>
           <h1 className="mt-4 text-4xl font-bold">Authenticate first, then test the real app flow.</h1>
           <p className="mt-4 max-w-xl text-sm text-slate-300 sm:text-base">
-            This project now has working auth screens. Use your Supabase project URL and anon key in `.env`,
+            This project now has working auth screens. Use your Supabase project URL and PUBLISHABLE key in `.env`,
             then sign up or sign in here instead of being blocked by a placeholder page.
           </p>
 
@@ -72,7 +72,7 @@ function AuthPage({ mode = 'login' }) {
             <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
               <div className="font-semibold">Required env vars</div>
               <div className="mt-2 font-mono text-xs text-sky-200">VITE_SUPABASE_URL</div>
-              <div className="font-mono text-xs text-sky-200">VITE_SUPABASE_ANON_KEY</div>
+              <div className="font-mono text-xs text-sky-200">VITE_SUPABASE_PUBLISHABLE_KEY</div>
             </div>
             {!isSupabaseConfigured() && (
               <div className="rounded-2xl border border-amber-400/30 bg-amber-400/10 p-4 text-amber-100">
